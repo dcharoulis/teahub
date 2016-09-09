@@ -1,0 +1,11 @@
+@(repositories: List[Repository])(implicit lang: Lang)
+
+@main(Messages("application.name")){
+
+  <dl class="repository">
+    @for(repository <- repositories) {
+      <dt>@repository.name</dt>
+      <dd>@repository.description</dd>
+    }
+  </dl>
+}
