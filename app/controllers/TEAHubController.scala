@@ -1,10 +1,15 @@
 package controllers
 
+import java.util.UUID
+
+import play.api.Play
 import play.api.libs.json.Json
 import play.api.mvc.Action
 import play.api.mvc._
-import services.TogglService
+import services._
+
 import scala.concurrent.{ExecutionContext, Future}
+import util.OAuth2
 
 /** Is a controller for the project
   *
@@ -23,5 +28,17 @@ class TEAHubController(togglService: TogglService)(implicit executionContext: Ex
       theResult =>
         Ok(Json.obj("Projects" -> theResult))
     }
+  }
+
+  def githubRepositories = Action.async{ implicit request =>
+    val code = request.getQueryString("code")
+    GitHubService.
+//    val callbackUrl = util.routes.OAuth2.callback(None, None).absoluteURL()
+//    val scope = "repo"   // github scope - request repo access
+//  val state = UUID.randomUUID().toString  // random confirmation string
+//  val redirectUrl = oauth2.getAuthorizationUrl(callbackUrl, scope, state)
+//    Ok(views.html.index("Your new application is ready.", redirectUrl)).
+//      withSession("oauth-state" -> state)
+
   }
 }

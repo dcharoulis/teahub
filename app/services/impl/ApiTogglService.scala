@@ -16,7 +16,7 @@ class ApiTogglService(ws: WSClient)(implicit val ec: ExecutionContext) extends T
     * @return returns the list of all Toggle projects in the workspace */
   override def getTogglProjects(apiToken: String): Future[List[String]] = {
     //TODO: The workspace ID should be passed to this method. Meanwhile, in order to test change the xxxx to a roper workspace.
-    val request = ws.url("https://www.toggl.com/api/v8/workspaces/xxxx/projects")
+    val request = ws.url("https://www.toggl.com/api/v8/workspaces/94268/projects")
       .withHeaders("Content-Type" -> "application/Json")
       .withAuth(apiToken, "api_token", BASIC)
 

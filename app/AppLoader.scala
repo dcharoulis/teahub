@@ -33,6 +33,9 @@ class AppComponent(context: Context)(implicit val ec: ExecutionContext) extends 
   lazy val togglService = new ApiTogglService(AhcWSClient())
   lazy val teahubController = new TEAHubController(togglService)
   lazy val assetsController = new controllers.Assets(httpErrorHandler)
+  implicit lazy val githubAuthId = application.configuration.getString("github.client.id").get
+  implicit lazy val githubAuthSecret = application.configuration.getString("github.client.secret").get
+  lazy val githubManager = new GithubManager(context.initialConfiguration.underlying, githubAuthId)
 
   lazy val router = new Routes(httpErrorHandler,
     teahubController,
