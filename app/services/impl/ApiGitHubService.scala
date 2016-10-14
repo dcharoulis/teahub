@@ -1,14 +1,13 @@
 package services.impl
 
-import play.api.Play
 import play.api.http.{HeaderNames, MimeTypes}
-import play.api.libs.ws.{WS, WSClient}
-import play.api.mvc.Results
+import play.api.libs.ws.WSClient
+import play.api.mvc.{Action, Results}
 import services.GitHubService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ApiGitHubService(ws: WSClient) (implicit val ec: ExecutionContext) extends GitHubService {
+class ApiGitHubService(ws: WSClient, githubAuthId: String, githubAuthSecret: String) (implicit val ec: ExecutionContext) extends GitHubService {
 
 
   /** Returns a Future List of projects that a user can access in github */
@@ -18,10 +17,10 @@ class ApiGitHubService(ws: WSClient) (implicit val ec: ExecutionContext) extends
     ???
   }
 
-  def getToken(code: String)(implicit githubAuthId: String, githubAuthSecret: String): Future[String] = {
+  def getToken(code: String): Future[String] = {
 
-    val tokenResponse = WS.url("https://github.com/login/oauth/access_token")(Play.current).
-      withQueryString("client_id" -> githubAuthId,
+    val tokenResponse = ws.url("https://github.com/login/oauth/access_token")
+        .withQueryString("client_id" -> githubAuthId,
         "client_secret" -> githubAuthSecret,
         "code" -> code).
       withHeaders(HeaderNames.ACCEPT -> MimeTypes.JSON).
@@ -34,5 +33,13 @@ class ApiGitHubService(ws: WSClient) (implicit val ec: ExecutionContext) extends
     }
   }
 
+  def success(authToken: String): Future[List[(Int, String, Option[String])]] ={
+    val request =  ws.url("https://api.github.com/user/repos").
+            withHeaders(HeaderNames.AUTHORIZATION -> s"token $authToken")
+    val resp = request.get()
+    resp.map { response =>
+      response.json.as[List[GitHubService.Repo]].map(x => (x.id, x.name, x.description))
+    }
+  }
 
 }

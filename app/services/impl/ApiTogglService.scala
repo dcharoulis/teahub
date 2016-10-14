@@ -20,6 +20,7 @@ class ApiTogglService(ws: WSClient)(implicit val ec: ExecutionContext) extends T
       .withHeaders("Content-Type" -> "application/Json")
       .withAuth(apiToken, "api_token", BASIC)
 
+
     request.get().map { response =>
       val bodyJSValue: JsValue = Json.parse(response.body)
       val validateBody = bodyJSValue.validate[List[Project]]

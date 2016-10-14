@@ -11,10 +11,6 @@ import services.impl.ApiGitHubService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
-import play.api.libs.ws.WS
-import play.api.http.HeaderNames
-
 /** Is a controller for the project
   *
   * @param togglService Service that requests Toggl the list of the projects */
@@ -55,7 +51,7 @@ class TEAHubController(togglService: TogglService, apiGitHubService: ApiGitHubSe
     } yield {
       if (state == oauthState) {
         apiGitHubService.getToken(code).map { accessToken =>
-          Redirect(controllers.routes.TEAHubController.success()).withSession("oauth-token" -> accessToken)
+          Redirect(controllers.routes.TEAHubController.successblah()).withSession("oauth-token" -> accessToken)
         }.recover {
           case ex: IllegalStateException => Unauthorized(ex.getMessage)
         }
@@ -66,16 +62,12 @@ class TEAHubController(togglService: TogglService, apiGitHubService: ApiGitHubSe
     }).getOrElse(Future.successful(BadRequest("No parameters supplied")))
   }
 
-
-  def success() = Action.async { request =>
-    implicit val app = Play.current
-    request.session.get("oauth-token").fold(Future.successful(Unauthorized("No way Jose"))) { authToken =>
-      WS.url("https://api.github.com/user/repos").
-        withHeaders(HeaderNames.AUTHORIZATION -> s"token $authToken").
-        get().map { response =>
-        val list = response.json.as[List[GitHubService.Repo]].map(x => (x.id, x.name, x.description) )
-        Ok(list.toString + response.json.toString)
-      }
+  def successblah()= Action.async{ implicit request =>
+    request.session.get("oauth-token").fold(Future.successful(Unauthorized("No way Jose"))) {authToken =>
+      val listthingy: Future[List[(Int, String, Option[String])]] = apiGitHubService.success(authToken)
+      for{
+        lnewList <- listthingy
+      }yield Ok(lnewList.toString())
     }
   }
 

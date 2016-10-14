@@ -31,11 +31,11 @@ class AppLoader extends ApplicationLoader {
   *                web command handler, and optional source mapper */
 class AppComponent(context: Context)(implicit val ec: ExecutionContext) extends BuiltInComponentsFromContext(context) {
   lazy val togglService = new ApiTogglService(AhcWSClient())
-  lazy val gitHubService = new ApiGitHubService(AhcWSClient())
+  lazy val gitHubService = new ApiGitHubService(AhcWSClient(), githubAuthId, githubAuthSecret)
   lazy val teahubController = new TEAHubController(togglService, gitHubService)
   lazy val assetsController = new controllers.Assets(httpErrorHandler)
-//  implicit lazy val githubAuthId = application.configuration.getString("github.client.id").get
-//  implicit lazy val githubAuthSecret = application.configuration.getString("github.client.secret").get
+  lazy val githubAuthId = application.configuration.getString("github.client.id").get
+  lazy val githubAuthSecret = application.configuration.getString("github.client.secret").get
 
   lazy val router = new Routes(httpErrorHandler,
     teahubController,
