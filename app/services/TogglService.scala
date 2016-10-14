@@ -40,8 +40,8 @@ object TogglService {
                      template: Boolean, at: DateTime, created_at: DateTime,
                      color: String, auto_estimates: Boolean, actual_hours: Int, hex_color: String)
 
-  implicit val dateReads = Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")
-  implicit val dateWrites = Writes.jodaDateWrites("yyyy-MM-dd'T'HH:mm:ss")
+  implicit val dateReads: Reads[DateTime] = Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")
+  implicit val dateWrites: Writes[DateTime] = Writes.jodaDateWrites("yyyy-MM-dd'T'HH:mm:ss")
   implicit val projectFormat: Format[Project] = Json.format[Project]
 
 }
