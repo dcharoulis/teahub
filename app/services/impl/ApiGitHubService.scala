@@ -1,5 +1,6 @@
 package services.impl
 
+import play.api.Play
 import play.api.http.{HeaderNames, MimeTypes}
 import play.api.libs.ws.{WS, WSClient}
 import play.api.mvc.Results
@@ -9,13 +10,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ApiGitHubService(ws: WSClient) (implicit val ec: ExecutionContext) extends GitHubService {
 
+
   /** Returns a Future List of projects that a user can access in github */
   override def getGitHubProjects(code: String): Future[List[String]] = {
     val request = getToken(code)
 
+    ???
   }
+
   def getToken(code: String)(implicit githubAuthId: String, githubAuthSecret: String): Future[String] = {
-    val tokenResponse = WS.url("https://github.com/login/oauth/access_token")(application).
+
+    val tokenResponse = WS.url("https://github.com/login/oauth/access_token")(Play.current).
       withQueryString("client_id" -> githubAuthId,
         "client_secret" -> githubAuthSecret,
         "code" -> code).
