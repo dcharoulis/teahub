@@ -2,7 +2,8 @@ import controllers.TEAHubController
 import play.api.{Application, ApplicationLoader, BuiltInComponentsFromContext, LoggerConfigurator}
 import play.api.ApplicationLoader.Context
 import play.api.libs.ws.ahc.AhcWSClient
-import services.impl.ApiTogglService
+import services.impl.{ApiGitHubService, ApiTogglService}
+
 import scala.concurrent.ExecutionContext
 import router.Routes
 
@@ -30,8 +31,11 @@ class AppLoader extends ApplicationLoader {
   * @param context is the context for loading an application. It includes Environment, initial configuration,
   *                web command handler, and optional source mapper */
 class AppComponent(context: Context)(implicit val ec: ExecutionContext) extends BuiltInComponentsFromContext(context) {
+  val githubAuthId = context.initialConfiguration.underlying.getString("github.client.id")
+  val githubAuthSecret = context.initialConfiguration.underlying.getString("github.client.secret")
   lazy val togglService = new ApiTogglService(AhcWSClient())
-  lazy val teahubController = new TEAHubController(togglService)
+  lazy val gitHubService = new ApiGitHubService(AhcWSClient(), githubAuthId, githubAuthSecret)
+  lazy val teahubController = new TEAHubController(togglService, gitHubService)
   lazy val assetsController = new controllers.Assets(httpErrorHandler)
 
   lazy val router = new Routes(httpErrorHandler,
