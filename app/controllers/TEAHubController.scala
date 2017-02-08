@@ -40,7 +40,6 @@ class TEAHubController(togglService: TogglService, apiGitHubService: ApiGitHubSe
             projectsName
           case Some(list) => list
         }
-
       }
       case None => Future.successful(List.empty)
     }
@@ -54,12 +53,10 @@ class TEAHubController(togglService: TogglService, apiGitHubService: ApiGitHubSe
     * Get list of GitHub repositories
     * @return A json object containing the list of GitHub repositories.
     */
-  def githubRepositories = Action.async { implicit request =>
-     val result: Future[List[String]] = request.session.get("oauth-token").map { token =>
+  def githubRepositories(implicit request: Request[AnyContent]): Future[List[String]] = {
+    request.session.get("oauth-token").map { token =>
       apiGitHubService.getGitHubProjects(token)
     }.getOrElse(Future.successful(List.empty))
-
-    result.map(res => Ok(Json.obj("repositories" -> res)))
   }
 
 }

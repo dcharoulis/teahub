@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc._
 import services.impl.ApiOAuthGitHubService
 import scala.concurrent.{ExecutionContext, Future}
-import routes.TEAHubController
+import routes.UIController
 
 /**
   * This is the controller responsible for the actions related to OAuth authentication between TEAHub and GitHub.
@@ -48,7 +48,8 @@ class OAuthGitHubController(oauthGitHubService: ApiOAuthGitHubService)
       else {
         Future.successful(BadRequest("Invalid github login"))
       }
-    }).getOrElse(Future.successful(Redirect(controllers.routes.OAuthGitHubController.login))) // when using back button from /main to /callback we are sent to login page
+      // when using back button from /main to /callback we are sent to login page
+    }).getOrElse(Future.successful(Redirect(controllers.routes.OAuthGitHubController.login)))
   }
 
   /**
@@ -57,7 +58,7 @@ class OAuthGitHubController(oauthGitHubService: ApiOAuthGitHubService)
     */
   def success() = Action.async { request =>
     request.session.get("oauth-token").fold(Future.successful(Unauthorized("401 Authentication token not found!"))) { authToken =>
-      Future(Redirect(TEAHubController.githubRepositories())
+      Future(Redirect(UIController.newProject())
       )
     }
   }

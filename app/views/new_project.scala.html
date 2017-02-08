@@ -1,4 +1,4 @@
-@(projectNameForm: Form[String])(implicit messages: Messages)
+@(projectNameForm: Form[String], projectsList: List[String])(implicit messages: Messages)
 
 @import helper.Implicits._
 @import b3.vertical.fieldConstructor
@@ -23,9 +23,9 @@
                     <div class="form-group">
                         <label for="selGithub">Select GitHub project:</label>
                         <select class="form-control" id="selGithub">
-                            <option>TEAHub</option>
-                            <option>Phylax</option>
-                            <option>Proximio</option>
+                            @for(project <- projectsList){
+                              <option>@project</option>
+                            }
                         </select>
                     </div>
                 </div>
